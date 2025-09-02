@@ -1,0 +1,11 @@
+CNV.R
+de_genes.rds
+interactions.rds
+run.final.infercnv_obj
+SCpubr_manuscript.Rproj
+figs/*
+.Rproj.user/*
+./figs/Fig_1A.pdf ./figs/Fig_1A.png ./figs/Fig_1A.svg ./figs/Fig_1B.pdf ./figs/Fig_1B.png ./figs/Fig_1B.svg ./figs/Fig_1C.pdf ./figs/Fig_1C.png ./figs/Fig_1C.svg ./figs/Fig_1D.pdf ./figs/Fig_1D.png ./figs/Fig_1D.svg ./figs/Fig_1E.pdf ./figs/Fig_1E.png ./figs/Fig_1E.svg ./figs/Fig_1F.pdf ./figs/Fig_1F.png ./figs/Fig_1F.svg ./figs/Fig_1G.pdf ./figs/Fig_1G.png ./figs/Fig_1G.svg ./figs/Fig_1H.pdf ./figs/Fig_1H.png ./figs/Fig_1H.svg ./figs/Fig_1I.pdf ./figs/Fig_1I.png ./figs/Fig_1I.svg ./figs/Fig_S1A.pdf ./figs/Fig_S1A.png ./figs/Fig_S1A.svg ./figs/Fig_S1B.pdf ./figs/Fig_S1B.png ./figs/Fig_S1B.svg ./figs/Fig_S1C.pdf ./figs/Fig_S1C.png ./figs/Fig_S1C.svg ./figs/Fig_S1D.pdf ./figs/Fig_S1D.png ./figs/Fig_S1D.svg ./figs/Fig_S1E.pdf ./figs/Fig_S1E.png ./figs/Fig_S1E.svg ./figs/Fig_S1F.pdf ./figs/Fig_S1F.png ./figs/Fig_S1F.svg ./figs/Fig_S1G.pdf ./figs/Fig_S1G.png ./figs/Fig_S1G.svg ./figs/Fig_S1H.pdf ./figs/Fig_S1H.png ./figs/Fig_S1H.svg ./figs/Fig_S1I.pdf ./figs/Fig_S1I.png ./figs/Fig_S1I.svg ./figs/Fig_S1J.pdf ./figs/Fig_S1J.png ./figs/Fig_S1J.svg ./figs/Fig_S1K.pdf ./figs/Fig_S1K.png ./figs/Fig_S1K.svg ./figs/Fig_S1L.pdf ./figs/Fig_S1L.png ./figs/Fig_S1L.svg ./figs/Fig_S1M.pdf ./figs/Fig_S1M.png ./figs/Fig_S1M.svg ./figs/Fig_S1N.pdf ./figs/Fig_S1N.png ./figs/Fig_S1N.svg ./figs/Fig_S1O.pdf ./figs/Fig_S1O.png ./figs/Fig_S1O.svg ./figs/Fig_S1P.png ./figs/Fig_S1Q.pdf ./figs/Fig_S1Q.png ./figs/Fig_S1Q.svg ./figs/Fig_S1R.pdf ./figs/Fig_S1R.png ./figs/Fig_S1R.svg ./figs/Fig_S1S.pdf ./figs/Fig_S1S.png ./figs/Fig_S1S.svg ./figs/Fig_S1T.pdf ./figs/Fig_S1T.png ./figs/Fig_S1T.svg ./figs/Fig_S1U.pdf ./figs/Fig_S1U.png ./figs/Fig_S1U.svg ./figs/Fig_S1V.pdf ./figs/Fig_S1V.png ./figs/Fig_S1V.svg ./figs/Fig_S1W.pdf ./figs/Fig_S1W.png ./figs/Fig_S1W.svg ./figs/Fig_S1X.pdf ./figs/Fig_S1X.png ./figs/Fig_S1X.svg ./figs/Fig_S1Y.pdf ./figs/Fig_S1Y.png ./figs/Fig_S1Y.svg ./figs/Fig_S1Z.pdf ./figs/Fig_S1Z.png ./figs/Fig_S1Z.svg
+.DS_Store
+.RData
+.Rhistory

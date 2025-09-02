@@ -1,0 +1,566 @@
+```{r}
+#| eval: false
+library(Seurat)
+library(magrittr)
+sample <- readRDS("/omics/odcf/analysis/OE0145_projects/idh_gliomas/Figures_Science/revision/IDH_gliomas_book/datasets/merged_primary_AS.rds")
+
+
+
+sample$orig.ident <- stringr::str_remove_all(sample$orig.ident, "^OE0145-")
+
+markers <- readRDS("/omics/odcf/analysis/OE0145_projects/idh_gliomas/Figures_Science/revision/IDH_gliomas_book/datasets/IDH_gliomas_final_annotation_kit.rds")
+markers <- markers[c("Pericytes", "Microglia", "Astrocytes", "Neurons", "Oligodendrocytes", "Endothelial", "Oligo_Program", "Astro_Program", "Stemness_Program", "AS_OPC_like", "AS_Astro_like", "AS_Cycling", "OD_RA")]
+
+names(markers) <- c("Pericytes", "Microglia", "Astrocytes", "Neurons", "Oligodendrocytes", "Endothelial", "Oligo_Program", "Astro_Program", "Stemness_Program", "OPC_like", "Astro_like", "Cycling", "RE")
+
+scale.ident <- c("IDH_ACB_AD_540" = "#E07A5F",
+                 "IDH_ACB_AD_809" = "#F2CC8F",
+                 "IDH_ACB_AD_883" = "#DAA82B",
+                 "IDH_NCH2111"    = "#81B29A",
+                 "IDH_NCH536"     = "#3E745E",
+                 "IDH_NCH6341"    = "#5CADC1",
+                 "IDH_NCH6702"    = "#8B6BB8",
+                 "IDH_NCH781"     = "#3D405B",
+                 "IDH_ACB_AD_785" = "#ae2012",
+                 "IDH_ACB_AD_832" = "#ca6702",
+                 "IDH_ACB_AD_865" = "#ee9b00",
+                 "IDH_NCH2018"    = "#e9d8a6",
+                 "IDH_NCH2157"    = "#457b9d",
+                 "IDH_NCH2164"    = "#1d3557")
+
+
+## Supp 1
+
+p1 <- SCpubr::do_ViolinPlot(sample, 
+                            features = "nFeature_RNA", 
+                            group.by = "orig.ident",
+                            flip = TRUE,
+                            colors.use = scale.ident,
+                            legend.title = "ID",
+                            xlab = "ID",
+                            ylab = "Number of genes",
+                            plot_boxplot = FALSE,
+                            font.size = 14)
+
+
+
+p2 <- SCpubr::do_RidgePlot(sample,
+                           feature = "nFeature_RNA",
+                           group.by = "orig.ident",
+                           colors.use = scale.ident,
+                           ylab = "ID",
+                           xlab = "Number of genes",
+                           font.size = 14,
+                           legend.title = "ID")
+
+p3 <- SCpubr::do_GeyserPlot(sample,
+                            features = "nFeature_RNA",
+                            group.by = "orig.ident",
+                            flip = TRUE,
+                            xlab = "ID",
+                            ylab = "Number of genes",
+                            legend.title = "Number of genes",
+                            font.size = 14)
+
+p4 <- SCpubr::do_BeeSwarmPlot(sample,
+                              feature_to_rank = "nFeature_RNA",
+                              group.by = "orig.ident",
+                              flip = FALSE,
+                              continuous_feature = TRUE,
+                              xlab = "Ranking of: Number of genes",
+                              ylab = "ID",
+                              legend.title = "Number of genes",
+                              legend.icon.size = 4,
+                              font.size = 14)
+
+
+p5 <- SCpubr::do_NebulosaPlot(sample,
+                              features = "MBP",
+                              font.size = 14,
+                              plot.title = "")
+p5$guides$colour$title <- "Density | MBP"
+
+p6 <- SCpubr::do_WafflePlot(sample,
+                            group.by = "orig.ident",
+                            colors.use = scale.ident,
+                            legend.title = "ID",
+                            font.size = 14)
+
+p7 <- SCpubr::do_CellularStatesPlot(sample = sample,
+                                    input_gene_list = markers,
+                                    x1 = "Astro_like",
+                                    y1 = "OPC_like",
+                                    font.size = 14,
+                                    group.by = "seurat_clusters",
+                                    enforce_symmetry = TRUE,
+                                    legend.icon.size = 4)
+
+
+p8 <- SCpubr::do_CellularStatesPlot(sample = sample,
+                                    input_gene_list = markers,
+                                    x1 = "Astro_like",
+                                    x2 = "OPC_like",
+                                    y1 = "Cycling",
+                                    font.size = 14,
+                                    group.by = "seurat_clusters",
+                                    enforce_symmetry = TRUE,
+                                    legend.icon.size = 4)
+
+p9 <- SCpubr::do_CellularStatesPlot(sample = sample,
+                                    input_gene_list = markers,
+                                    x1 = "Astro_like",
+                                    x2 = "OPC_like",
+                                    y1 = "Cycling",
+                                    y2 = "RE",
+                                    font.size = 14,
+                                    group.by = "seurat_clusters",
+                                    enforce_symmetry = TRUE,
+                                    legend.icon.size = 4)
+
+p10 <- SCpubr::do_ChordDiagramPlot(sample = sample,
+                                   from = "orig.ident",
+                                   to = "seurat_clusters",
+                                   colors.from = scale.ident,
+                                   scale = TRUE,
+                                   font.size = 0.50,
+                                   colors.to = stats::setNames(SCpubr::do_ColorPalette(colors.use = "steelblue",
+                                                                                       n = 20),
+                                                               as.character(seq(0, 19))))
+
+sample$ID <- sample$orig.ident
+sample$Clusters <- sample$seurat_clusters
+p11 <- SCpubr::do_AlluvialPlot(sample,
+                               first_group = "Clusters",
+                               last_group = "ID",
+                               font.size = 14,
+                               stratum.color = "black",
+                               stratum.width = 0.5,
+                               colors.use = scale.ident,
+                               legend.position = "bottom")
+
+Seurat::Idents(sample) <- sample$orig.ident
+de_genes <- COSG::cosg(object = sample, n = 3)
+de_genes <- de_genes$names %>% as.list()
+p12 <- SCpubr::do_ExpressionHeatmap(sample = sample,
+                                    features = de_genes,
+                                    font.size = 14)
+
+
+
+p13 <- SCpubr::do_SCEnrichmentHeatmap(sample,
+                                      input_gene_list = markers,
+                                      group.by = "orig.ident",
+                                      subsample = 200,
+                                      font.size = 12,
+                                      strip.text.color = "white",
+                                      metadata = "orig.ident",
+                                      metadata.colors = list("orig.ident" = scale.ident),
+                                      legend.ncol = 2,
+                                      legend.length = 12.5,
+                                      min.cutoff = 0) + 
+        ggplot2::labs(y = "Gene set")
+
+
+features.use <- c(Seurat::Loadings(sample)[, "PC_1"] %>% sort() %>% head(n = 5) %>% names(),
+                  Seurat::Loadings(sample)[, "PC_1"] %>% sort() %>% tail(n = 5) %>% names())
+
+
+
+p14 <- SCpubr::do_RankedExpressionHeatmap(sample,
+                                          reduction = "pca",
+                                          dims = c(1, 2),
+                                          subsample = 500,
+                                          group.by = "orig.ident",
+                                          colors.use = list("orig.ident" = scale.ident),
+                                          font.size = 14,
+                                          legend.ncol = 2,
+                                          legend.length = 12.5,
+                                          features = features.use)[[1]]
+
+
+p15 <- SCpubr::do_RankedEnrichmentHeatmap(sample,
+                                          reduction = "pca",
+                                          dims = c(1, 2),
+                                          subsample = 500,
+                                          group.by = "orig.ident",
+                                          nbin = 10,
+                                          colors.use = list("orig.ident" = scale.ident),
+                                          input_gene_list = markers,
+                                          legend.ncol = 2,
+                                          legend.length = 12.5,
+                                          font.size = 14)[[1]] + 
+        ggplot2::labs(y = "Gene set")
+
+p16 <- SCpubr::do_SCExpressionHeatmap(sample = sample,
+                                      features = features.use,
+                                      group.by = "orig.ident",
+                                      subsample = 200,
+                                      font.size = 12,
+                                      metadata = "orig.ident",
+                                      metadata.colors = list("orig.ident" = scale.ident),
+                                      legend.ncol = 2,
+                                      legend.length = 12.5,
+                                      strip.text.color = "white",
+                                      min.cutoff = 0)
+
+
+# Supplementary figure 3.
+
+# Affinity heatmap.
+p17 <- SCpubr::do_ActivityHeatmap(sample,
+                                  input_gene_list = markers,
+                                  group.by = "seurat_clusters",
+                                  font.size = 14,
+                                  max.cutoff = 3) + 
+       ggplot2::labs(x = "Clusters")
+
+
+# GroupwiseDEHeatmap.
+sample.subset <- sample[, sample(colnames(sample), 1000)]
+Seurat::Idents(sample.subset) <- sample.subset$orig.ident
+de_genes <- Seurat::FindAllMarkers(sample.subset)
+
+p18 <- SCpubr::do_GroupwiseDEHeatmap(sample,
+                                     de_genes = de_genes,
+                                     group.by = "orig.ident",
+                                     legend.ncol = 2,
+                                     font.size = 14,
+                                     top_genes = 4,
+                                     ylab = "ID",
+                                     colors.use = scale.ident)
+# LigandReceptorPlot.
+sample.subset <- sample[, sample(colnames(sample), 1000)]
+Seurat::Idents(sample.subset) <- sample.subset$seurat_clusters
+interactions <- liana::liana_wrap(sample.subset)
+saveRDS(interactions, "~/eblanco/SCpubr_manuscript/interactions.rds")
+int <- liana::liana_aggregate(interactions)
+
+p19 <- SCpubr::do_LigandReceptorPlot(liana_output = int,
+                                     keep_source = c("0", "1"),
+                                     keep_target = c( "2", "3", "4", "5", "6", "7", "8", "9"),
+                                     font.size = 13,
+                                     dot.size = 0.5,
+                                     legend.length = 12.5)
+
+
+
+# Copy Number Variant Plot.
+sample <- readRDS("/omics/odcf/analysis/OE0145_projects/idh_gliomas/Figures_Science/revision/IDH_gliomas_book/datasets/integrated_primary_AS.rds")
+cnv <- readRDS("/b06x-isi/g703/d-f/eblanco/SCpubr_manuscript/run.final.infercnv_obj")
+p20 <- SCpubr::do_CNVHeatmap(sample = sample,
+                                        infercnv_object = cnv,
+                                        group.by = "seurat_clusters",
+                                        using_metacells = TRUE,
+                                        font.size = 14,
+                                        chromosome_locations = SCpubr::human_chr_locations,
+                                        metacell_mapping = sample$metacell_mapping,
+                                        include_chr_arms = TRUE,
+                                        max.cutoff = 1.04,
+                                        min.cutoff = 0.96,
+                                        flip = FALSE)
+# LoadingsHeatmap.
+p21 <- SCpubr::do_LoadingsHeatmap(sample,
+                                  dims = c(1, 2, 3),
+                                  font.size = 13,
+                                  legend.length = 12.5)
+# PathwayActivityPlot()
+net <- decoupleR::get_progeny(organism = 'human', top = 500)
+
+# Run ulm
+acts <- decoupleR::run_ulm(mat = sample.subset@assays$SCT@data, 
+                           net = net, 
+                           .source = 'source', 
+                           .target = 'target',
+                           .mor = 'weight', 
+                           minsize = 5)
+
+p22 <- SCpubr::do_PathwayActivityHeatmap(sample = sample.subset,
+                                         activities = acts,
+                                         group.by = "seurat_clusters",
+                                         statistic = "ulm",
+                                         flip = TRUE,
+                                         min.cutoff = -3,
+                                         font.size = 14)
+# TFActivityPlot()
+net <- decoupleR::get_collectri(organism = 'human', 
+                                split_complexes = FALSE)
+acts <- decoupleR::run_ulm(mat = sample.subset@assays$SCT@data, 
+                           net = net, 
+                           .source = 'source', 
+                           .target = 'target',
+                           .mor='mor', 
+                           minsize = 5)
+p23 <- SCpubr::do_TFActivityHeatmap(sample = sample.subset,
+                                    activities = acts,
+                                    n_tfs = 20,
+                                    statistic = "ulm",
+                                    group.by = "seurat_clusters",
+                                    flip = TRUE)
+
+
+# VolcanoPlot.
+de_genes <- readRDS("~/eblanco/SCpubr_manuscript/de_genes.rds")
+p24 <- SCpubr::do_VolcanoPlot(sample,
+                              de_genes = de_genes,
+                              n_genes = 3,
+                              pval_cutoff = 0.0001,
+                              FC_cutoff = 1.25,
+                              font.size = 14,
+                              tag_size = 3,
+                              pt.size = 1)
+
+
+# Supplementary 4
+
+# Metadata plot.
+metadata <- as.data.frame(readxl::read_excel("/omics/odcf/analysis/OE0145_projects/idh_gliomas/Figures_Science/revision/IDH_gliomas_book/datasets/primary_samples_metadata.xlsx"))
+
+# Process metadata.
+rownames(metadata) <- metadata$Samples
+metadata$Samples <- NULL
+metadata <- metadata %>% 
+            dplyr::filter(Diagnosis == "Astrocytoma") %>% 
+            dplyr::select(dplyr::all_of(c("ATRX status", "Diagnosis", "Grade", "Sex"))) %>% 
+            as.data.frame() %>% 
+            tibble::rownames_to_column(var = "ID") %>% 
+            tibble::as_tibble() %>% 
+            dplyr::mutate_all(.funs = function(x){ifelse(x == "NA", NA, x)}) %>% 
+            dplyr::mutate("ATRX status" = factor(.data$`ATRX status`, levels = c("WT", "Loss")),
+                          "Diagnosis" = factor(.data$Diagnosis, levels = c("Oligodendroglioma", "Astrocytoma")),
+                          "Grade" = factor(.data$Grade, levels = c("Grade 2", "Grade 3")),
+                          "Sex" = factor(.data$Sex, levels = c("Female", "Male"))) %>% 
+            tibble::column_to_rownames(var = "ID") %>% 
+            as.data.frame()
+
+# Define colors.
+colors.use <- list("ATRX status" = c("WT" = "#4f6d7a", "Loss" = "#99582a"),
+                   "Diagnosis" = c("Oligodendroglioma" = "#3c5b8b", "Astrocytoma" = "#b38b14"),
+                   "Grade" = c("Grade 2" = "#1a7d9e", "Grade 3" = "#9e1a3b"),
+                   "Sex" = c("Male" = "#723d46", "Female" = "#af9d6a"))
+
+p25 <- SCpubr::do_MetadataHeatmap(from_df = TRUE,
+                              df = metadata,
+                              legend.position = "right",
+                              legend.ncol = 1,
+                              colors.use = colors.use,
+                              axis.text.face = "plain", 
+                              font.size = 14, 
+                              legend.font.size = 10, 
+                              legend.symbol.size = 4) &
+       ggplot2::ylab("")
+
+
+# Colorblind check.
+p26 <- SCpubr::do_ColorBlindCheck(colors.use = scale.ident, 
+                                  font.size = 14)
+
+SCpubr::do_SavePlot(plot = p1,
+                  figure_path = "/b06x-isi/g703/d-f/eblanco/SCpubr_manuscript/figs/",
+                  file_name = "Fig_S1A",
+                  output_format = "publication",
+                  dpi = 300,
+                  width = 5.933,
+                  height = 6.33)
+
+SCpubr::do_SavePlot(plot = p2,
+                  figure_path = "/b06x-isi/g703/d-f/eblanco/SCpubr_manuscript/figs/",
+                  file_name = "Fig_S1B",
+                  output_format = "publication",
+                  dpi = 300,
+                  width = 5.933,
+                  height = 6.33)
+
+SCpubr::do_SavePlot(plot = p3,
+                  figure_path = "/b06x-isi/g703/d-f/eblanco/SCpubr_manuscript/figs/",
+                  file_name = "Fig_S1C",
+                  output_format = "publication",
+                  dpi = 300,
+                  width = 5.933,
+                  height = 6.33)
+
+SCpubr::do_SavePlot(plot = p4,
+                  figure_path = "/b06x-isi/g703/d-f/eblanco/SCpubr_manuscript/figs/",
+                  file_name = "Fig_S1D",
+                  output_format = "publication",
+                  dpi = 300,
+                  width = 5.933,
+                  height = 6.33)
+
+SCpubr::do_SavePlot(plot = p5,
+                  figure_path = "/b06x-isi/g703/d-f/eblanco/SCpubr_manuscript/figs/",
+                  file_name = "Fig_S1E",
+                  output_format = "publication",
+                  dpi = 300,
+                  width = 5.933,
+                  height = 6.33)
+
+SCpubr::do_SavePlot(plot = p6,
+                  figure_path = "/b06x-isi/g703/d-f/eblanco/SCpubr_manuscript/figs/",
+                  file_name = "Fig_S1F",
+                  output_format = "publication",
+                  dpi = 300,
+                  width = 5.933,
+                  height = 6.33)
+
+SCpubr::do_SavePlot(plot = p7,
+                  figure_path = "/b06x-isi/g703/d-f/eblanco/SCpubr_manuscript/figs/",
+                  file_name = "Fig_S1G",
+                  output_format = "publication",
+                  dpi = 300,
+                  width = 5.933,
+                  height = 6.33)
+
+SCpubr::do_SavePlot(plot = p8,
+                  figure_path = "/b06x-isi/g703/d-f/eblanco/SCpubr_manuscript/figs/",
+                  file_name = "Fig_S1H",
+                  output_format = "publication",
+                  dpi = 300,
+                  width = 5.933,
+                  height = 6.33)
+
+SCpubr::do_SavePlot(plot = p9,
+                  figure_path = "/b06x-isi/g703/d-f/eblanco/SCpubr_manuscript/figs/",
+                  file_name = "Fig_S1I",
+                  output_format = "publication",
+                  dpi = 300,
+                  width = 5.933,
+                  height = 6.33)
+
+SCpubr::do_SavePlot(plot = p10,
+                  figure_path = "/b06x-isi/g703/d-f/eblanco/SCpubr_manuscript/figs/",
+                  file_name = "Fig_S1J",
+                  output_format = "publication",
+                  dpi = 300,
+                  width = 5.933,
+                  height = 6.33)
+
+SCpubr::do_SavePlot(plot = p11,
+                  figure_path = "/b06x-isi/g703/d-f/eblanco/SCpubr_manuscript/figs/",
+                  file_name = "Fig_S1K",
+                  output_format = "publication",
+                  dpi = 300,
+                  width = 7.5,
+                  height = 6.33)
+
+SCpubr::do_SavePlot(plot = p12,
+                  figure_path = "/b06x-isi/g703/d-f/eblanco/SCpubr_manuscript/figs/",
+                  file_name = "Fig_S1L",
+                  output_format = "publication",
+                  dpi = 300,
+                  width = 5.933,
+                  height = 6.33)
+
+
+SCpubr::do_SavePlot(plot = p13,
+                  figure_path = "/b06x-isi/g703/d-f/eblanco/SCpubr_manuscript/figs/",
+                  file_name = "Fig_S1M",
+                  output_format = "publication",
+                  dpi = 300,
+                  width = 7.5,
+                  height = 6.33)
+
+SCpubr::do_SavePlot(plot = p14,
+                  figure_path = "/b06x-isi/g703/d-f/eblanco/SCpubr_manuscript/figs/",
+                  file_name = "Fig_S1N",
+                  output_format = "png",
+                  dpi = 300,
+                  width = 7.5,
+                  height = 6.33)
+
+SCpubr::do_SavePlot(plot = p15,
+                  figure_path = "/b06x-isi/g703/d-f/eblanco/SCpubr_manuscript/figs/",
+                  file_name = "Fig_S1O",
+                  output_format = "png",
+                  dpi = 300,
+                  width = 7.5,
+                  height = 6.33)
+
+SCpubr::do_SavePlot(plot = p16,
+                  figure_path = "/b06x-isi/g703/d-f/eblanco/SCpubr_manuscript/figs/",
+                  file_name = "Fig_S1P",
+                  output_format = "png",
+                  dpi = 300,
+                  width = 7.5,
+                  height = 6.33)
+
+SCpubr::do_SavePlot(plot = p21,
+                  figure_path = "/b06x-isi/g703/d-f/eblanco/SCpubr_manuscript/figs/",
+                  file_name = "Fig_S1Q",
+                  output_format = "publication",
+                  dpi = 300,
+                  width = 5.933,
+                  height = 6.33)
+
+SCpubr::do_SavePlot(plot = p17,
+                  figure_path = "/b06x-isi/g703/d-f/eblanco/SCpubr_manuscript/figs/",
+                  file_name = "Fig_S1R",
+                  output_format = "publication",
+                  dpi = 300,
+                  width = 5.933,
+                  height = 6.33)
+
+SCpubr::do_SavePlot(plot = p18,
+                  figure_path = "/b06x-isi/g703/d-f/eblanco/SCpubr_manuscript/figs/",
+                  file_name = "Fig_S1S",
+                  output_format = "publication",
+                  dpi = 300,
+                  width = 11.866,
+                  height = 7.5)
+
+SCpubr::do_SavePlot(plot = p22,
+                  figure_path = "/b06x-isi/g703/d-f/eblanco/SCpubr_manuscript/figs/",
+                  file_name = "Fig_S1T",
+                  output_format = "publication",
+                  dpi = 300,
+                  width = 7.5,
+                  height = 6.33)
+
+SCpubr::do_SavePlot(plot = p23,
+                  figure_path = "/b06x-isi/g703/d-f/eblanco/SCpubr_manuscript/figs/",
+                  file_name = "Fig_S1U",
+                  output_format = "publication",
+                  dpi = 300,
+                  width = 5.933,
+                  height = 6.33)
+
+SCpubr::do_SavePlot(plot = p19,
+                  figure_path = "/b06x-isi/g703/d-f/eblanco/SCpubr_manuscript/figs/",
+                  file_name = "Fig_S1V",
+                  output_format = "publication",
+                  dpi = 300,
+                  width = 5.933,
+                  height = 6.33)
+
+SCpubr::do_SavePlot(plot = p20,
+                  figure_path = "/b06x-isi/g703/d-f/eblanco/SCpubr_manuscript/figs/",
+                  file_name = "Fig_S1W",
+                  output_format = "publication",
+                  dpi = 300,
+                  width = 11.866,
+                  height = 7.5)
+
+SCpubr::do_SavePlot(plot = p24,
+                  figure_path = "/b06x-isi/g703/d-f/eblanco/SCpubr_manuscript/figs/",
+                  file_name = "Fig_S1X",
+                  output_format = "publication",
+                  dpi = 300,
+                  width = 5.933,
+                  height = 6.33)
+
+SCpubr::do_SavePlot(plot = p25,
+                  figure_path = "/b06x-isi/g703/d-f/eblanco/SCpubr_manuscript/figs/",
+                  file_name = "Fig_S1Y",
+                  output_format = "publication",
+                  dpi = 300,
+                  width = 5.933,
+                  height = 6.33)
+
+SCpubr::do_SavePlot(plot = p26,
+                  figure_path = "/b06x-isi/g703/d-f/eblanco/SCpubr_manuscript/figs/",
+                  file_name = "Fig_S1Z",
+                  output_format = "publication",
+                  dpi = 300,
+                  width = 5.933,
+                  height = 6.33)
+```
+
