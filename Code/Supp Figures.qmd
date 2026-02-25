@@ -53,7 +53,7 @@ p2 <- SCpubr::do_RidgePlot(sample,
                            font.size = 14,
                            legend.title = "ID")
 
-p3 <- SCpubr::do_GeyserPlot(sample,
+p3 <- SCpubr::do_StripPlot(sample,
                             features = "nFeature_RNA",
                             group.by = "orig.ident",
                             flip = TRUE,
@@ -233,6 +233,7 @@ sample.subset <- sample[, sample(colnames(sample), 1000)]
 Seurat::Idents(sample.subset) <- sample.subset$seurat_clusters
 interactions <- liana::liana_wrap(sample.subset)
 saveRDS(interactions, "~/eblanco/SCpubr_manuscript/interactions.rds")
+interactions <- readRDS("~/eblanco/Projects/SCpubr_bundle/SCpubr_manuscript/interactions.rds")
 int <- liana::liana_aggregate(interactions)
 
 p19 <- SCpubr::do_LigandReceptorPlot(liana_output = int,
